@@ -14,6 +14,11 @@ const (
 	// of the NamespaceNetworkConfiguration resource.
 	NamespaceNetworkLabelKey = "netoperator.vmware.com/network-configuration"
 
+	// ManagedByNNCLabelKey is the label key applied to Network resources created by a
+	// NamespaceNetworkConfiguration. The value of this label is the name of the owning
+	// NamespaceNetworkConfiguration.
+	ManagedByNNCLabelKey = "netoperator.vmware.com/managed-by-nnc"
+
 	// NamespaceNetworkProtectionFinalizer is attached to a
 	// NamespaceNetworkConfiguration by Net Operator to prevent deletion while
 	// any Namespace holds the NamespaceNetworkLabelKey label pointing to this
