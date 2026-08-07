@@ -111,7 +111,11 @@ $(KUBE_APISERVER) $(ETCD):
 	$(MAKE) -C $(TOOLS_DIR) $(@F) KUBEBUILDER_K8S_VERSION=$(ENVTEST_K8S_VERSION)
 
 .PHONY: test
-test: test-cel ## Run all tests.
+test: test-unit test-cel ## Run all tests.
+
+.PHONY: test-unit
+test-unit:
+	go test -v ./... -count=1 -timeout 120s
 
 .PHONY: test-cel
 test-cel: generate-manifests $(KUBE_APISERVER) $(ETCD) ## Run CEL envtest integration tests (uses kube-apiserver+etcd from ENVTEST_K8S_VERSION)
