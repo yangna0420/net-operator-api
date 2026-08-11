@@ -13,6 +13,17 @@ import (
 	ctrlclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
+// NetworkNamespaceNetworkConfigurationOwner returns the corresponding NamespaceNetworkConfiguration
+// that manages this given Network. If an emtpy string is returned, then this Network is not
+// managed via a NamespaceNetworkConfiguration.
+func NetworkNamespaceNetworkConfigurationOwner(network *netopv1alpha1.Network) string {
+	if network == nil {
+		return ""
+	}
+
+	return network.GetLabels()[netopv1alpha1.ManagedByNNCLabelKey]
+}
+
 // NetworksOwnedByNamespaceNetworkConfiguration retrieves a list of Network resources
 // that are managed by the specified NamespaceNetworkConfiguration.
 //

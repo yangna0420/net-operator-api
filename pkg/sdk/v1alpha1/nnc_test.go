@@ -25,6 +25,47 @@ func testScheme() *runtime.Scheme {
 	return scheme
 }
 
+func TestNetworkNamespaceNetworkConfigurationOwner(t *testing.T) {
+	tests := []struct {
+		name    string
+		network *netopv1alpha1.Network
+		want    string
+	}{
+		{
+			name:    "nil network",
+			network: nil,
+			want:    "",
+		},
+		{
+			name:    "no labels",
+			network: &netopv1alpha1.Network{},
+			want:    "",
+		},
+		{
+			name: "missing owner label",
+			network: &netopv1alpha1.Network{
+				ObjectMeta: metav1.ObjectMeta{Labels: map[string]string{"other-label": "val"}},
+			},
+			want: "",
+		},
+		{
+			name: "owner label present",
+			network: &netopv1alpha1.Network{
+				ObjectMeta: metav1.ObjectMeta{
+					Labels: map[string]string{netopv1alpha1.ManagedByNNCLabelKey: "my-nnc"},
+				},
+			},
+			want: "my-nnc",
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			require.Equal(t, tc.want, NetworkNamespaceNetworkConfigurationOwner(tc.network))
+		})
+	}
+}
+
 func TestNetworksOwnedByNamespaceNetworkConfiguration(t *testing.T) {
 	netB := &netopv1alpha1.Network{ObjectMeta: metav1.ObjectMeta{
 		Name:      "net-b",
