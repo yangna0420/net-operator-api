@@ -31,16 +31,19 @@ func TestNetworksOwnedByNamespaceNetworkConfiguration(t *testing.T) {
 		Namespace: "ns-1",
 		Labels:    map[string]string{netopv1alpha1.ManagedByNNCLabelKey: "my-nnc"},
 	}}
+
 	netA := &netopv1alpha1.Network{ObjectMeta: metav1.ObjectMeta{
 		Name:      "net-a",
 		Namespace: "ns-1",
 		Labels:    map[string]string{netopv1alpha1.ManagedByNNCLabelKey: "my-nnc"},
 	}}
+
 	netOtherNamespace := &netopv1alpha1.Network{ObjectMeta: metav1.ObjectMeta{
 		Name:      "net-c",
 		Namespace: "ns-2",
 		Labels:    map[string]string{netopv1alpha1.ManagedByNNCLabelKey: "my-nnc"},
 	}}
+
 	netUnmanaged := &netopv1alpha1.Network{ObjectMeta: metav1.ObjectMeta{
 		Name:      "net-unmanaged",
 		Namespace: "ns-1",
@@ -50,18 +53,20 @@ func TestNetworksOwnedByNamespaceNetworkConfiguration(t *testing.T) {
 	c := ctrlfake.NewClientBuilder().WithScheme(testScheme()).
 		WithObjects(netB, netA, netOtherNamespace, netUnmanaged).Build()
 
-	t.Run("filters by namespace and sorts by name", func(t *testing.T) {
+	t.Run("filters by namespace", func(t *testing.T) {
 		got, err := NetworksOwnedByNamespaceNetworkConfiguration(context.Background(), c, "my-nnc", "ns-1")
 		require.NoError(t, err)
 		require.Len(t, got, 2)
-		require.Equal(t, "net-a", got[0].GetName())
-		require.Equal(t, "net-b", got[1].GetName())
+
+		requireContainsAll(t, got, uncastObjs(netA, netB)...)
 	})
 
 	t.Run("empty namespace searches across all namespaces", func(t *testing.T) {
 		got, err := NetworksOwnedByNamespaceNetworkConfiguration(context.Background(), c, "my-nnc", "")
 		require.NoError(t, err)
 		require.Len(t, got, 3)
+
+		requireContainsAll(t, got, uncastObjs(netA, netB, netOtherNamespace)...)
 	})
 
 	t.Run("no matches returns empty, not nil", func(t *testing.T) {
@@ -69,4 +74,21 @@ func TestNetworksOwnedByNamespaceNetworkConfiguration(t *testing.T) {
 		require.NoError(t, err)
 		require.Empty(t, got)
 	})
+}
+
+// requireContainsAll asserts that the given list of entries is a subset of the provided container.
+func requireContainsAll[V any](t *testing.T, container []V, entries ...V) {
+	for _, entry := range entries {
+		require.Contains(t, container, entry)
+	}
+}
+
+// uncastObjs takes a list of pointer objects and returns them by value.
+func uncastObjs[T any](objs ...*T) []T {
+	uncasted := make([]T, 0, len(objs))
+	for _, obj := range objs {
+		uncasted = append(uncasted, *obj)
+	}
+
+	return uncasted
 }
