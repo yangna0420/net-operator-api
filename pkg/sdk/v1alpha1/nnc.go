@@ -44,6 +44,5 @@ func NetworksOwnedByNamespaceNetworkConfiguration(ctx context.Context, c ctrlcli
 		return nil, fmt.Errorf("error listing Networks owned by NamespaceNetworkConfiguration '%s' in namespace '%s': %w", nncName, namespace, err)
 	}
 
-	// To retain deterministic response, sort the networks before returning.
 	return networkList.Items, nil
 }
