@@ -179,6 +179,9 @@ type NetworkInterfacePortAllocation struct {
 }
 
 // NetworkInterfaceSpec defines the desired state of NetworkInterface.
+//
+// +kubebuilder:validation:XValidation:rule="!has(self.ipFamilyPolicy) || self.ipFamilyPolicy != 'IPv4Only' || !has(self.requestedIPs) || self.requestedIPs.all(x, !isIP(x) || ip(x).family() == 4)",message="requestedIPs must only contain IPv4 addresses when ipFamilyPolicy is IPv4Only"
+// +kubebuilder:validation:XValidation:rule="!has(self.ipFamilyPolicy) || self.ipFamilyPolicy != 'IPv6Only' || !has(self.requestedIPs) || self.requestedIPs.all(x, !isIP(x) || ip(x).family() == 6)",message="requestedIPs must only contain IPv6 addresses when ipFamilyPolicy is IPv6Only"
 type NetworkInterfaceSpec struct {
 	// NetworkName refers to a NetworkObject in the same namespace.
 	NetworkName string `json:"networkName,omitempty"`
@@ -213,6 +216,22 @@ type NetworkInterfaceSpec struct {
 	// +optional
 	// +kubebuilder:validation:Enum=IPv4Only;IPv6Only;DualStack
 	IPFamilyPolicy NetworkInterfaceIPFamilyPolicy `json:"ipFamilyPolicy,omitempty"`
+	// requestedIPs is an optional list of specific IP addresses to allocate to this network
+	// interface. If omitted, IP addresses are allocated automatically.
+	//
+	// requestedIPs is only honored for IP families whose IP allocation mode on the backing
+	// Network is static pool. If an entry's family uses DHCP, the Network has no IPPool
+	// configured for that family, the entry falls outside every configured IPPool's range, or
+	// the entry is already reserved by another IPAM consumer, the NetworkInterface fails to
+	// become Ready (Failure condition reason CannotAllocIP).
+	// +optional
+	// +listType=atomic
+	// +kubebuilder:validation:MaxItems=2
+	// +kubebuilder:validation:items:MinLength=3
+	// +kubebuilder:validation:items:MaxLength=39
+	// +kubebuilder:validation:items:XValidation:rule="isIP(self)",message="each requestedIP must be a valid IPv4 or IPv6 address"
+	// +kubebuilder:validation:XValidation:rule="!self.all(x, isIP(x)) || size(self) <= 1 || ip(self[0]).family() != ip(self[1]).family()",message="requestedIPs must not contain two addresses of the same IP family"
+	RequestedIPs []string `json:"requestedIPs,omitempty"`
 }
 
 // NetworkInterfaceReference is an object that points to a NetworkInterface.
