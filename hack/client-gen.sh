@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# © Broadcom. All Rights Reserved.
+# The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
+# SPDX-License-Identifier: Apache-2.0
 
 set -o errexit
 set -o pipefail
@@ -18,16 +21,16 @@ INFORMERGEN_PATH=$PKG/pkg/client/informers_generated
 HEADER_FILE=hack/boilerplate/boilerplate.go.txt
 
 $TOOLS_PATH/client-gen --go-header-file $HEADER_FILE --input-base $PKG/api --input /$VERSION \
- --output-dir $CLIENT_OUT/clientset_generated/$CLIENTSET_NAME \
+ --output-dir "$CLIENT_OUT"/clientset_generated/$CLIENTSET_NAME \
  --output-pkg $CLIENTGEN_PATH/$CLIENTSET_NAME
 
 $TOOLS_PATH/lister-gen --go-header-file $HEADER_FILE \
- --output-dir $CLIENT_OUT/listers_generated \
+ --output-dir "$CLIENT_OUT"/listers_generated \
  --output-pkg $LISTERGEN_PATH \
  $PKG/api/$VERSION
 
 $TOOLS_PATH/informer-gen --single-directory --go-header-file $HEADER_FILE \
- --output-dir $CLIENT_OUT/informers_generated \
+ --output-dir "$CLIENT_OUT"/informers_generated \
  --output-pkg $INFORMERGEN_PATH \
  --listers-package $LISTERGEN_PATH \
  --versioned-clientset-package $CLIENTGEN_PATH/$CLIENTSET_NAME \
