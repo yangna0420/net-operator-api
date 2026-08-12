@@ -14,14 +14,20 @@ import (
 )
 
 // NetworkNamespaceNetworkConfigurationOwner returns the corresponding NamespaceNetworkConfiguration
-// that manages this given Network. If an emtpy string is returned, then this Network is not
-// managed via a NamespaceNetworkConfiguration.
-func NetworkNamespaceNetworkConfigurationOwner(network *netopv1alpha1.Network) string {
+// that manages this given Network, and a boolean indicating if the label is present.
+// If the boolean is false, this Network is not managed via a NamespaceNetworkConfiguration.
+func NetworkNamespaceNetworkConfigurationOwner(network *netopv1alpha1.Network) (string, bool) {
 	if network == nil {
-		return ""
+		return "", false
 	}
 
-	return network.GetLabels()[netopv1alpha1.ManagedByNNCLabelKey]
+	labels := network.GetLabels()
+	if labels == nil {
+		return "", false
+	}
+
+	owner, ok := labels[netopv1alpha1.ManagedByNNCLabelKey]
+	return owner, ok
 }
 
 // NetworksOwnedByNamespaceNetworkConfiguration retrieves a list of Network resources

@@ -30,23 +30,27 @@ func TestNetworkNamespaceNetworkConfigurationOwner(t *testing.T) {
 		name    string
 		network *netopv1alpha1.Network
 		want    string
+		wantOK  bool
 	}{
 		{
 			name:    "nil network",
 			network: nil,
 			want:    "",
+			wantOK:  false,
 		},
 		{
 			name:    "no labels",
 			network: &netopv1alpha1.Network{},
 			want:    "",
+			wantOK:  false,
 		},
 		{
 			name: "missing owner label",
 			network: &netopv1alpha1.Network{
 				ObjectMeta: metav1.ObjectMeta{Labels: map[string]string{"other-label": "val"}},
 			},
-			want: "",
+			want:   "",
+			wantOK: false,
 		},
 		{
 			name: "owner label present",
@@ -55,13 +59,26 @@ func TestNetworkNamespaceNetworkConfigurationOwner(t *testing.T) {
 					Labels: map[string]string{netopv1alpha1.ManagedByNNCLabelKey: "my-nnc"},
 				},
 			},
-			want: "my-nnc",
+			want:   "my-nnc",
+			wantOK: true,
+		},
+		{
+			name: "owner label present but empty",
+			network: &netopv1alpha1.Network{
+				ObjectMeta: metav1.ObjectMeta{
+					Labels: map[string]string{netopv1alpha1.ManagedByNNCLabelKey: ""},
+				},
+			},
+			want:   "",
+			wantOK: true,
 		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			require.Equal(t, tc.want, NetworkNamespaceNetworkConfigurationOwner(tc.network))
+			got, ok := NetworkNamespaceNetworkConfigurationOwner(tc.network)
+			require.Equal(t, tc.want, got)
+			require.Equal(t, tc.wantOK, ok)
 		})
 	}
 }
