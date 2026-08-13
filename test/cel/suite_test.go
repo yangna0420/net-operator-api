@@ -1,6 +1,6 @@
-// Copyright (c) 2026 Broadcom. All Rights Reserved.
-// Broadcom Confidential. The term "Broadcom" refers to Broadcom Inc.
-// and/or its subsidiaries.
+// © Broadcom. All Rights Reserved.
+// The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
+// SPDX-License-Identifier: Apache-2.0
 
 // Package cel_test contains envtest-based tests that verify CEL and OpenAPI
 // validation rules fire correctly on admission for the CRD types in this repo.
