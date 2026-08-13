@@ -30,6 +30,13 @@ const (
 	nsNamespace  = "default"
 )
 
+// NetworkInterface resource identity.
+const (
+	nifAPIVersion = "netoperator.vmware.com/v1alpha1"
+	nifKind       = "NetworkInterface"
+	nifNamespace  = "default"
+)
+
 // Shared test path and name values.
 const (
 	testNetName        = "net"
