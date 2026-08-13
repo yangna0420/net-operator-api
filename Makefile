@@ -1,4 +1,8 @@
-# If you update this file, please follow
+# © Broadcom. All Rights Reserved.
+# The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
+# SPDX-License-Identifier: Apache-2.0
+
+# # If you update this file, please follow
 # https://suva.sh/posts/well-documented-makefiles
 
 # Ensure Make is run with bash shell as some syntax below is bash-specific
