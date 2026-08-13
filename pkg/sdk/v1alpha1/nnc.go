@@ -21,12 +21,7 @@ func NetworkNamespaceNetworkConfigurationOwner(network *netopv1alpha1.Network) (
 		return "", false
 	}
 
-	labels := network.GetLabels()
-	if labels == nil {
-		return "", false
-	}
-
-	owner, ok := labels[netopv1alpha1.ManagedByNNCLabelKey]
+	owner, ok := network.GetLabels()[netopv1alpha1.ManagedByNNCLabelKey]
 	return owner, ok
 }
 
