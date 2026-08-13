@@ -217,7 +217,8 @@ type NetworkInterfaceSpec struct {
 	// +kubebuilder:validation:Enum=IPv4Only;IPv6Only;DualStack
 	IPFamilyPolicy NetworkInterfaceIPFamilyPolicy `json:"ipFamilyPolicy,omitempty"`
 	// requestedIPs is an optional list of specific IP addresses to allocate to this network
-	// interface. If omitted, IP addresses are allocated automatically.
+	// interface. At most one IPv4 and one IPv6 address may be requested. If omitted, IP
+	// addresses are allocated automatically.
 	//
 	// requestedIPs is only honored for IP families whose IP allocation mode on the backing
 	// Network is static pool. If an entry's family uses DHCP, the Network has no IPPool
