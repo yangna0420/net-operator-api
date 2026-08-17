@@ -1,4 +1,8 @@
-# If you update this file, please follow
+# © Broadcom. All Rights Reserved.
+# The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.
+# SPDX-License-Identifier: Apache-2.0
+
+# # If you update this file, please follow
 # https://suva.sh/posts/well-documented-makefiles
 
 # Ensure Make is run with bash shell as some syntax below is bash-specific
@@ -111,7 +115,11 @@ $(KUBE_APISERVER) $(ETCD):
 	$(MAKE) -C $(TOOLS_DIR) $(@F) KUBEBUILDER_K8S_VERSION=$(ENVTEST_K8S_VERSION)
 
 .PHONY: test
-test: test-cel ## Run all tests.
+test: test-unit test-cel ## Run all tests.
+
+.PHONY: test-unit
+test-unit:
+	go test -v ./... -count=1 -timeout 120s
 
 .PHONY: test-cel
 test-cel: generate-manifests $(KUBE_APISERVER) $(ETCD) ## Run CEL envtest integration tests (uses kube-apiserver+etcd from ENVTEST_K8S_VERSION)
