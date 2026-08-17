@@ -20,6 +20,16 @@ const (
 	// resource.
 	NamespaceNetworkProtectionFinalizer = "netoperator.vmware.com/nnc-protection"
 
+	// PreExistingVPCNetworkConfigAnnotation, when set on a
+	// NamespaceNetworkConfiguration at creation time, names a pre-existing
+	// VPCNetworkConfiguration for the VPC reconciler to adopt (1:1) instead of
+	// auto-creating one named after this resource. This supports brownfield
+	// namespaces provisioned before adoption by this NamespaceNetworkConfiguration.
+	//
+	// Immutable once set and must not collide with another
+	// NamespaceNetworkConfiguration's mapping.
+	PreExistingVPCNetworkConfigAnnotation = "netoperator.vmware.com/vpc-network-configuration"
+
 	// NamespaceNetworkConditionReady is True when all networking resources owned
 	// by the NamespaceNetworkConfiguration have been created and every associated
 	// Namespace has been fully reconciled. When no Namespaces are associated,
