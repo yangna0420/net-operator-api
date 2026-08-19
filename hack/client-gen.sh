@@ -20,9 +20,10 @@ LISTERGEN_PATH=$PKG/pkg/client/listers_generated
 INFORMERGEN_PATH=$PKG/pkg/client/informers_generated
 HEADER_FILE=hack/boilerplate/boilerplate.go.txt
 
-$TOOLS_PATH/client-gen --go-header-file $HEADER_FILE --input-base $PKG/api --input /$VERSION \
- --output-dir "$CLIENT_OUT"/clientset_generated/$CLIENTSET_NAME \
- --output-pkg $CLIENTGEN_PATH/$CLIENTSET_NAME
+$TOOLS_PATH/client-gen --go-header-file $HEADER_FILE --input-base $PKG --input api/$VERSION \
+ --clientset-name $CLIENTSET_NAME \
+ --output-dir "$CLIENT_OUT"/clientset_generated \
+ --output-pkg $CLIENTGEN_PATH
 
 $TOOLS_PATH/lister-gen --go-header-file $HEADER_FILE \
  --output-dir "$CLIENT_OUT"/listers_generated \
